@@ -12,12 +12,12 @@ Website Vercel (1 URL, semua orang)  →  http://localhost:8787 (bat di laptop u
 
 ## A. Sekali saja — taruh website di Vercel
 
-File yang dibutuhkan sudah ada: `cover-letter-generator.html` + `vercel.json`.
+File utama yang dilayani: `index.html` (otomatis tampil di `/`, tanpa konfigurasi).
 
 **Cara termudah (drag & drop):**
 1. Buat akun gratis di https://vercel.com
 2. Menu **Add New → Project → Deploy** (atau drag folder proyek ini ke dashboard).
-   Pastikan folder berisi `cover-letter-generator.html` dan `vercel.json`.
+   Pastikan folder berisi `index.html`.
 3. Klik **Deploy**. Selesai — kamu dapat URL publik, mis. `https://nama-kamu.vercel.app`
 
 **Atau via CLI:**
@@ -28,7 +28,7 @@ vercel        # ikuti prompt; pilih default
 vercel --prod # publish ke URL produksi
 ```
 
-> `vercel.json` membuat root `/` otomatis membuka generator-nya.
+> Karena file utamanya bernama `index.html`, Vercel otomatis menampilkannya di `/` tanpa konfigurasi tambahan.
 
 ---
 

@@ -15,7 +15,7 @@ import crypto from 'node:crypto';
 
 const PORT = process.env.PORT || 8787;
 const DIR = path.dirname(fileURLToPath(import.meta.url));
-const HTML = path.join(DIR, 'cover-letter-generator.html');
+const HTML = path.join(DIR, 'index.html');
 const KB_FILE = path.join(DIR, 'knowledge-base.txt'); // KB kustom yang diedit dari website
 const MODELS = new Set(['sonnet', 'opus', 'haiku']);
 
@@ -261,7 +261,7 @@ const server = http.createServer(async (req, res) => {
       html = html.includes('</head>') ? html.replace('</head>', inject + '\n</head>') : inject + html;
       send(200, 'text/html; charset=utf-8', html);
     } catch {
-      send(500, 'text/plain', 'cover-letter-generator.html tidak ditemukan di folder yang sama.');
+      send(500, 'text/plain', 'index.html tidak ditemukan di folder yang sama.');
     }
     return;
   }

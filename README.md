@@ -19,7 +19,7 @@ jadi tidak perlu API key berbayar. Tiap orang memakai langganan Claude-nya masin
 ## Cara pakai cepat (lokal)
 
 ### Mode Aturan saja (paling simpel)
-Dobel-klik **`cover-letter-generator.html`** → langsung jalan di browser.
+Dobel-klik **`index.html`** → langsung jalan di browser.
 
 ### Mode AI (pakai login Claude lokal)
 Prasyarat: **Node.js** + **Claude Code** terpasang & sudah login (`claude` sekali di terminal).
@@ -36,7 +36,7 @@ Prasyarat: **Node.js** + **Claude Code** terpasang & sudah login (`claude` sekal
 
 Website statis di Vercel + bridge lokal per orang. Detail lengkap: **[`DEPLOY-VERCEL.md`](DEPLOY-VERCEL.md)**.
 
-Singkatnya: deploy folder ini ke Vercel (sudah ada `vercel.json`), lalu tiap orang
+Singkatnya: deploy folder ini ke Vercel (file utamanya `index.html`, otomatis tampil di `/`), lalu tiap orang
 menjalankan launcher di komputernya dan menempel **kode pairing** ke tombol
 "Hubungkan Claude lokal" di website. Browser HTTPS memanggil `http://localhost:8787`
 milik user → diteruskan ke `claude -p` (login mereka).
@@ -49,11 +49,10 @@ milik user → diteruskan ke `claude -p` (login mereka).
 
 | File | Fungsi |
 |---|---|
-| `cover-letter-generator.html` | UI generator (mesin Aturan + AI, editor Knowledge Base) |
+| `index.html` | UI generator (mesin Aturan + AI, editor Knowledge Base) |
 | `generator-server.mjs` | Bridge lokal: meneruskan job ke `claude -p`, gerbang kode pairing |
 | `start-generator.bat` | Launcher Windows |
 | `start-generator.command` | Launcher macOS |
-| `vercel.json` | Konfigurasi deploy statis Vercel |
 | `DEPLOY-VERCEL.md` | Panduan deploy + cara pakai pairing |
 
 ---
