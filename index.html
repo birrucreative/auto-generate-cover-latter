@@ -125,7 +125,8 @@
     <h1>Upwork Cover Letter Generator</h1>
     <p>Tulis cover letter Upwork yang benar-benar tailored — mode offline &amp; AI (login Claude)</p>
   </div>
-  <button class="ghost" id="kbToggle" style="margin-left:auto">⚙ Knowledge Base</button>
+  <button class="ghost" id="profToggle" style="margin-left:auto">👤 Profil</button>
+  <button class="ghost" id="kbToggle" style="margin-left:8px">⚙ Knowledge Base</button>
 </header>
 
 <div class="wrap">
@@ -295,6 +296,34 @@
       </div>
       <textarea id="kbText" style="min-height:440px; font-family:'SF Mono','Cascadia Code',Consolas,monospace; font-size:12.5px; line-height:1.5;" spellcheck="false"></textarea>
       <div class="meta"><span id="kbMeta">0 karakter</span></div>
+    </div>
+  </section>
+
+  <!-- PROFIL SINGKAT (untuk mesin Aturan / offline) -->
+  <section class="card" id="profilepanel" style="grid-column:1/-1; display:none">
+    <div class="head">
+      <h2>👤 Profil singkat — mesin Aturan (offline)</h2>
+      <div class="btnrow" style="margin:0">
+        <button class="ghost" id="profReset">Reset ke bawaan</button>
+        <button class="primary" id="profSave">💾 Simpan</button>
+      </div>
+    </div>
+    <div class="body">
+      <div class="small" style="margin-bottom:12px">
+        Identitasmu untuk mesin <b>Aturan (offline)</b> — dipakai di tanda tangan, baris kredibilitas, dan link portofolio.
+        (Mode <b>AI</b> pakai Knowledge Base, bukan ini.) Tersimpan <b>di browser ini</b>; tiap orang/akun punya profilnya sendiri.
+        <span id="profStatus"></span>
+      </div>
+      <div class="row">
+        <div class="field"><label>Nama (untuk tanda tangan)</label><input type="text" id="pf_name" placeholder="cth: Cintha" /></div>
+        <div class="field"><label>Link portofolio default</label><input type="text" id="pf_general" placeholder="cth: https://www.behance.net/namamu" /></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Tahun pengalaman</label><input type="text" id="pf_years" placeholder="cth: 6" /></div>
+        <div class="field"><label>Jumlah proyek</label><input type="text" id="pf_projects" placeholder="cth: 1,200+" /></div>
+      </div>
+      <label style="margin-top:12px; display:block">Link portofolio per kategori <span class="hint">— boleh kosong → otomatis pakai portofolio default</span></label>
+      <div id="pf_links" style="display:grid; grid-template-columns:1fr 1fr; gap:0 14px; margin-top:4px"></div>
     </div>
   </section>
 </div>
@@ -573,6 +602,37 @@ const DEFAULT_KB = (document.getElementById("defaultKB").textContent || "").trim
 function getKB() { const k = localStorage.getItem("clgen_kb"); return (k && k.trim()) ? k : DEFAULT_KB; }
 function isCustomKB() { const k = localStorage.getItem("clgen_kb"); return !!(k && k.trim() && k.trim() !== DEFAULT_KB); }
 
+/* ===== Profil singkat untuk mesin ATURAN (offline) — tersimpan di browser =====
+   Nama, tahun, jumlah proyek, portofolio default, + link per kategori.
+   Link kategori kosong → otomatis pakai portofolio default. */
+const DEFAULT_PROFILE = {
+  name: PROFILE.name,
+  years: String(PROFILE.years),
+  projects: PROFILE.projects,
+  general: PROFILE.general,
+  links: Object.fromEntries(Object.keys(CATEGORIES).map(k => [k, CATEGORIES[k].behance]))
+};
+function isCustomProfile() { const s = localStorage.getItem("clgen_profile"); return !!(s && s.trim() && s.trim() !== "{}"); }
+function getProfile() {
+  const raw = localStorage.getItem("clgen_profile");
+  if (!raw || !raw.trim()) return DEFAULT_PROFILE;       // belum dikustom → contoh bawaan
+  let s = {};
+  try { s = JSON.parse(raw); } catch (e) { return DEFAULT_PROFILE; }
+  const p = {
+    name: (s.name || "").trim() || DEFAULT_PROFILE.name,
+    years: String(s.years == null ? "" : s.years).trim() || DEFAULT_PROFILE.years,
+    projects: (s.projects || "").trim() || DEFAULT_PROFILE.projects,
+    general: (s.general || "").trim() || DEFAULT_PROFILE.general,
+    links: {}
+  };
+  const L = s.links || {};
+  for (const k of Object.keys(DEFAULT_PROFILE.links)) {
+    const v = (L[k] || "").trim();
+    p.links[k] = v || p.general;   // kategori kosong → portofolio default si pengguna
+  }
+  return p;
+}
+
 /* ===== UI wiring ===== */
 const $ = id => document.getElementById(id);
 const catSel = $("category");
@@ -659,6 +719,8 @@ function generate() {
   if (catKey === "auto") { detInfo = detectCategory(combined); catKey = detInfo.key; }
   else detInfo = { key: catKey, score: -1 };
   const cat = CATEGORIES[catKey];
+  const P = getProfile();                          // profil pengguna (atau bawaan)
+  const behance = P.links[catKey] || cat.behance;  // link kategori dari profil
 
   // action
   let act = $("action").value;
@@ -688,18 +750,18 @@ function generate() {
 
   if (style === "expert") {
     /* ----- Gaya kasual (bid 26–47) ----- */
-    const portfolio = (detInfo.score === 0) ? PROFILE.general : cat.behance;
+    const portfolio = (detInfo.score === 0) ? P.general : behance;
     const lines = [
       greet, "",
       valueSentence, "",
-      `I'm ${PROFILE.name}, a presentation design expert who helps clients from any industry turn ideas into impactful presentations. With ${PROFILE.years} years of experience and over ${PROFILE.projects} completed projects, I'm proficient in PowerPoint, Canva, Google Slides, and Keynote.`, "",
+      `I'm ${P.name}, a presentation design expert who helps clients from any industry turn ideas into impactful presentations. With ${P.years} years of experience and over ${P.projects} completed projects, I'm proficient in PowerPoint, Canva, Google Slides, and Keynote.`, "",
       "Feel free to check my portfolio below:",
       portfolio, "",
     ];
     if (bid) lines.push(`Proposed: ${bid}.`, "");
     if (optOn("freesample"))
       lines.push(`I'm happy to share a FREE SAMPLE ${sampleWord} showcasing my design approach. Feel free to reach out!`, "");
-    lines.push("Best regards,", PROFILE.fullName);
+    lines.push("Best regards,", P.name);
     letter = lines.join("\n");
   } else {
     /* ----- Gaya terstruktur (bid 2–19) — sinyal terkuat ----- */
@@ -709,12 +771,12 @@ function generate() {
     }
     lines.push(greet, "");
     lines.push(valueSentence, "");
-    lines.push(`I have ${PROFILE.years} years of experience in presentation design and have completed ${PROFILE.projects} projects, including ${cat.cred}.`, "");
-    lines.push(`Relevant project samples:`, cat.behance, "");
+    lines.push(`I have ${P.years} years of experience in presentation design and have completed ${P.projects} projects, including ${cat.cred}.`, "");
+    lines.push(`Relevant project samples:`, behance, "");
     if (bid) lines.push(`Proposed scope: ${bid}.`, "");
     lines.push(pick(CTA, varSeed).replace("{NOUN}", noun));
     lines.push(pick(CLOSER, varSeed + 1), "");
-    lines.push("Best regards,", PROFILE.name);
+    lines.push("Best regards,", P.name);
     letter = lines.join("\n");
   }
 
@@ -726,7 +788,7 @@ function generate() {
 
   const auto = catSel.value === "auto";
   $("detected").innerHTML = auto
-    ? `Terdeteksi: <b>${cat.label}</b> ${detInfo.score === 0 ? "(skor rendah → fallback umum)" : `(skor ${detInfo.score})`} · Behance: <b>${cat.behance.split("/").pop()}</b>`
+    ? `Terdeteksi: <b>${cat.label}</b> ${detInfo.score === 0 ? "(skor rendah → fallback umum)" : `(skor ${detInfo.score})`} · Behance: <b>${behance.split("/").pop()}</b>`
     : `Kategori manual: <b>${cat.label}</b>`;
 }
 
@@ -925,6 +987,61 @@ $("kbReset").addEventListener("click", () => {
 /* ===== Tombol Hubungkan Claude lokal ===== */
 $("pairBtn").addEventListener("click", doConnect);
 $("pairCode").addEventListener("keydown", (e) => { if (e.key === "Enter") doConnect(); });
+
+/* ===== Panel Profil singkat (mesin Aturan) ===== */
+function buildProfileLinks() {
+  $("pf_links").innerHTML = Object.keys(CATEGORIES).map(k =>
+    `<div class="field" style="margin-bottom:8px">
+       <label style="font-size:11.5px">${CATEGORIES[k].label}</label>
+       <input type="text" id="pf_link_${k}" placeholder="kosong → portofolio default" />
+     </div>`).join("");
+}
+function profStatusLine() {
+  $("profStatus").innerHTML = isCustomProfile()
+    ? '<b style="color:var(--green-dark)">● Memakai profil kamu (tersimpan di browser ini)</b>'
+    : '● Memakai contoh bawaan (Cintha) — isi dengan profilmu sendiri';
+}
+function profLoad() {
+  let s = {};
+  try { s = JSON.parse(localStorage.getItem("clgen_profile") || "{}"); } catch (e) {}
+  $("pf_name").value     = s.name     != null ? s.name     : DEFAULT_PROFILE.name;
+  $("pf_years").value    = s.years    != null ? s.years    : DEFAULT_PROFILE.years;
+  $("pf_projects").value = s.projects != null ? s.projects : DEFAULT_PROFILE.projects;
+  $("pf_general").value  = s.general  != null ? s.general  : DEFAULT_PROFILE.general;
+  const L = s.links || {};
+  Object.keys(CATEGORIES).forEach(k => { const el = $("pf_link_" + k); if (el) el.value = L[k] || ""; });
+  profStatusLine();
+}
+$("profToggle").addEventListener("click", () => {
+  const open = $("profilepanel").style.display !== "none";
+  if (open) { $("profilepanel").style.display = "none"; return; }
+  $("profilepanel").style.display = "block";
+  profLoad();
+  $("profilepanel").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("profSave").addEventListener("click", () => {
+  const links = {};
+  Object.keys(CATEGORIES).forEach(k => { const v = ($("pf_link_" + k).value || "").trim(); if (v) links[k] = v; });
+  const obj = {
+    name: $("pf_name").value.trim(),
+    years: $("pf_years").value.trim(),
+    projects: $("pf_projects").value.trim(),
+    general: $("pf_general").value.trim(),
+    links
+  };
+  localStorage.setItem("clgen_profile", JSON.stringify(obj));
+  profStatusLine();
+  showToast("Profil tersimpan di browser ini ✓");
+  if (getEngine() === "rules") generate();   // segarkan hasil
+});
+$("profReset").addEventListener("click", () => {
+  if (!confirm("Reset profil ke contoh bawaan? Profil yang kamu simpan di browser ini akan hilang.")) return;
+  localStorage.removeItem("clgen_profile");
+  profLoad();
+  showToast("Profil direset ke bawaan ✓");
+  if (getEngine() === "rules") generate();
+});
+buildProfileLinks();
 
 // cek status bridge + pairing saat load
 pingAI();
