@@ -1,27 +1,15 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Data pribadi / referensi — JANGAN di-commit ke repo
+Upwork-Bids-and-Profile-Reference.md
+Upwork-Presentation-Jobs-Latest.md
+Upwork-Qualifications-CinthaF.md
 
-# next.js
-/.next/
-/out/
-/build
-next-env.d.ts
+# File runtime (KB kustom yang diedit dari website)
+knowledge-base.txt
 
-# env & secrets
-.env
-.env.local
-.env*.local
-
-# local data store (bookmarks, token cache)
-/.data/
-
-# logs & misc
+# Node
+node_modules/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-*.tsbuildinfo
+
+# OS
 .DS_Store
-.vscode/*
-!.vscode/extensions.json
+Thumbs.db

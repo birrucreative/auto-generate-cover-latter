@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Upwork Cover Letter Generator — Cintha F.</title>
+<style>
+  :root {
+    --green: #14a800;
+    --green-dark: #108a00;
+    --ink: #0f1419;
+    --muted: #5e6b73;
+    --line: #e4e8ea;
+    --bg: #f5f7f7;
+    --card: #ffffff;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  header.top {
+    background: var(--ink);
+    color: #fff;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  header.top .logo {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--green); color: #fff; font-weight: 800;
+    display: grid; place-items: center; font-size: 18px;
+  }
+  header.top h1 { font-size: 17px; margin: 0; font-weight: 700; }
+  header.top p { margin: 0; font-size: 12.5px; color: #aab4ba; }
+  .wrap {
+    max-width: 1180px; margin: 0 auto; padding: 22px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+  }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+  }
+  .card .head {
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  }
+  .card .head h2 { font-size: 14px; margin: 0; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .card .body { padding: 18px; }
+  label { display: block; font-size: 12.5px; font-weight: 600; margin: 0 0 5px; color: var(--ink); }
+  .hint { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+  input[type=text], textarea, select {
+    width: 100%; padding: 9px 11px; font-size: 13.5px; font-family: inherit;
+    border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(20,168,0,.12);
+  }
+  textarea { resize: vertical; min-height: 86px; }
+  .field { margin-bottom: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
+  .chip {
+    font-size: 12px; padding: 6px 11px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; user-select: none; transition: all .12s;
+  }
+  .chip:hover { border-color: #b9c2c7; }
+  .chip.on { background: var(--green); border-color: var(--green); color: #fff; font-weight: 600; }
+  .btnrow { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+  button.primary, button.ghost {
+    font-family: inherit; font-size: 13.5px; font-weight: 700; border-radius: 10px;
+    padding: 11px 18px; cursor: pointer; border: 1px solid transparent; transition: all .12s;
+  }
+  button.primary { background: var(--green); color: #fff; }
+  button.primary:hover { background: var(--green-dark); }
+  button.ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  button.ghost:hover { border-color: #b9c2c7; }
+  .detected {
+    margin-top: 10px; font-size: 12px; color: var(--muted);
+    background: #f0f7ee; border: 1px solid #d6ecd0; border-radius: 9px; padding: 9px 11px;
+  }
+  .detected b { color: var(--green-dark); }
+  .output {
+    white-space: pre-wrap; font-family: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 13px; line-height: 1.62; color: var(--ink);
+    background: #fbfcfc; border: 1px dashed var(--line); border-radius: 10px;
+    padding: 16px; min-height: 360px;
+  }
+  .meta { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+  .meta span b { color: var(--ink); }
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-size: 13px;
+    opacity: 0; pointer-events: none; transition: all .25s; z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  details.tips { margin-top: 14px; font-size: 12.5px; color: var(--muted); }
+  details.tips summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  details.tips li { margin: 4px 0; }
+  .small { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">C</div>
+  <div>
+    <h1>Upwork Cover Letter Generator</h1>
+    <p>Cintha F. · Pitch Deck &amp; Presentation Designer — meniru gaya & struktur 47 proposal asli</p>
+  </div>
+  <button class="ghost" id="kbToggle" style="margin-left:auto">⚙ Knowledge Base</button>
+</header>
+
+<div class="wrap">
+  <!-- INPUT -->
+  <section class="card">
+    <div class="head"><h2>1 · Detail Pekerjaan</h2></div>
+    <div class="body">
+      <div class="row">
+        <div class="field">
+          <label>Nama klien <span class="hint">(opsional)</span></label>
+          <input type="text" id="client" placeholder="cth: Suresh — kosongkan jika tak ada" />
+        </div>
+        <div class="field">
+          <label>Turnaround <span class="hint">(opsional)</span></label>
+          <input type="text" id="turnaround" placeholder="cth: 48 hours / 24 hours" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Judul pekerjaan</label>
+        <input type="text" id="title" placeholder="cth: Tidy, Brand and Polish Startup Pitch Deck" />
+      </div>
+
+      <div class="field">
+        <label>Deskripsi pekerjaan <span class="hint">— tempel teks job, dipakai untuk deteksi kategori otomatis</span></label>
+        <textarea id="desc" placeholder="Tempel deskripsi job di sini. Generator akan mendeteksi kategori (investor / SaaS / fintech / medis / template / dll) dan memilih link Behance + kredibilitas yang paling cocok."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Kategori proyek</label>
+        <select id="category"></select>
+        <div class="small">Default: <b>Auto-detect</b> dari judul + deskripsi.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Aksi utama</label>
+          <select id="action">
+            <option value="auto">Auto-detect</option>
+            <option value="transform">Transform</option>
+            <option value="polish">Polish</option>
+            <option value="redesign">Redesign</option>
+            <option value="refine">Refine</option>
+            <option value="create">Create</option>
+            <option value="expand">Expand</option>
+            <option value="convert">Convert</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Bid / harga <span class="hint">(opsional)</span></label>
+          <input type="text" id="bid" placeholder="cth: $150 fixed / 3-5 hari" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Software target</label>
+        <div class="chips" id="software">
+          <span class="chip on" data-sw="PowerPoint">PowerPoint</span>
+          <span class="chip" data-sw="Google Slides">Google Slides</span>
+          <span class="chip" data-sw="Canva">Canva</span>
+          <span class="chip" data-sw="Keynote">Keynote</span>
+          <span class="chip" data-sw="Word/PDF">Word/PDF</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Gaya proposal</label>
+        <div class="chips" id="style">
+          <span class="chip on" data-style="structured">Terstruktur (tailored)</span>
+          <span class="chip" data-style="expert">Pakar (kasual)</span>
+        </div>
+        <div class="small">Terstruktur = hook + value spesifik + Behance terpilih (sinyal terkuat). Pakar = perkenalan ringkas + portofolio umum.</div>
+      </div>
+
+      <div class="field">
+        <label>Mesin penulis</label>
+        <div class="chips" id="engine">
+          <span class="chip on" data-engine="rules">Aturan (offline)</span>
+          <span class="chip" data-engine="ai">AI Claude (login)</span>
+        </div>
+        <select id="model" style="margin-top:8px; display:none">
+          <option value="sonnet">Claude Sonnet — cepat &amp; hemat kuota (disarankan)</option>
+          <option value="opus">Claude Opus — kualitas tertinggi, lebih lambat</option>
+        </select>
+        <div class="small" id="engineNote">Aturan = instan &amp; offline (template). AI = Claude membaca isi job lalu menulis benar-benar tailored — pakai login Claude-mu, tanpa API key. <span id="aiStatus"></span></div>
+
+        <div id="connectBox" style="display:none; margin-top:10px; padding:11px; border:1px solid var(--line); border-radius:9px; background:#fbfcfc">
+          <div class="small" style="margin-bottom:7px"><b>Hubungkan Claude lokal:</b> jalankan <b>start-generator.bat</b> di komputermu, lalu tempel <b>KODE PAIRING</b> yang muncul di terminal.</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <input type="text" id="pairCode" placeholder="cth: A1B2C3D4" style="flex:1; min-width:120px; text-transform:uppercase" />
+            <button class="primary" id="pairBtn" style="padding:9px 16px">Hubungkan</button>
+          </div>
+          <div class="small" id="pairStatus" style="margin-top:6px"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Opsi tambahan</label>
+        <div class="chips" id="opts">
+          <span class="chip on" data-opt="hook">Hook ALL CAPS</span>
+          <span class="chip on" data-opt="pdf">Lampiran PDF</span>
+          <span class="chip" data-opt="freesample">Tawarkan free sample (kasual)</span>
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button class="primary" id="gen">⚡ Buat Cover Letter</button>
+        <button class="ghost" id="vary">🔀 Variasikan</button>
+      </div>
+      <div class="detected" id="detected">Isi judul/deskripsi lalu klik <b>Buat Cover Letter</b>.</div>
+    </div>
+  </section>
+
+  <!-- OUTPUT -->
+  <section class="card">
+    <div class="head">
+      <h2>2 · Cover Letter</h2>
+      <div class="btnrow" style="margin:0">
+        <button class="ghost" id="copy">📋 Salin</button>
+        <button class="ghost" id="download">⬇ .txt</button>
+      </div>
+    </div>
+    <div class="body">
+      <div class="output" id="out">Hasil akan muncul di sini…</div>
+      <div class="meta">
+        <span><b id="wc">0</b> kata</span>
+        <span><b id="cc">0</b> karakter</span>
+        <span id="catLabel"></span>
+      </div>
+      <details class="tips">
+        <summary>Tips memakai (biar tidak kena flag “generic” Upwork)</summary>
+        <ul>
+          <li>Klik <b>Variasikan</b> tiap kirim proposal — sinonim aksi & CTA diacak supaya tidak identik antar bid.</li>
+          <li>Selalu sebut <b>1 detail spesifik</b> dari job (nama produk, jumlah slide, deadline) di kalimat value.</li>
+          <li>Pakai <b>nama klien</b> kalau terlihat di job — naikkan response rate.</li>
+          <li>Link Behance dipilih otomatis sesuai kategori; ganti manual lewat dropdown bila perlu.</li>
+          <li>Selalu review sebelum kirim — generator ini draf cepat, bukan auto-submit.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- KNOWLEDGE BASE EDITOR -->
+  <section class="card" id="kbpanel" style="grid-column:1/-1; display:none">
+    <div class="head">
+      <h2>⚙ Knowledge Base — otak AI</h2>
+      <div class="btnrow" style="margin:0">
+        <button class="ghost" id="kbReload">↺ Muat ulang</button>
+        <button class="ghost" id="kbReset">Reset ke bawaan</button>
+        <button class="primary" id="kbSave">💾 Simpan</button>
+      </div>
+    </div>
+    <div class="body">
+      <div class="small" style="margin-bottom:8px">
+        Ini yang dibaca AI saat menulis: <b>profil &amp; kredibilitas, anatomi proposal, peta link Behance, aturan gaya, dan contoh bid asli</b>.
+        Edit bebas lalu <b>Simpan</b> — berlaku untuk semua proposal mode AI berikutnya. Instruksi teknis "output hanya surat" tetap terkunci otomatis, jadi aman diubah.
+        <span id="kbStatus"></span>
+      </div>
+      <textarea id="kbText" style="min-height:440px; font-family:'SF Mono','Cascadia Code',Consolas,monospace; font-size:12.5px; line-height:1.5;" spellcheck="false"></textarea>
+      <div class="meta"><span id="kbMeta">0 karakter</span></div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast">Tersalin ke clipboard ✓</div>
+
+<script>
+/* ===== PROFILE (sumber: file referensi) ===== */
+const PROFILE = {
+  name: "Cintha",
+  fullName: "Cintha Fryanda",
+  years: 6,
+  projects: "1,200+",
+  pdf: " Cintha Presentation Portofolio.pdf(5.7 MB)",
+  general: "https://www.behance.net/cintha"
+};
+
+/* ===== KATEGORI — link Behance & kredibilitas diambil persis dari bid asli ===== */
+const CATEGORIES = {
+  corporate: {
+    label: "Corporate / Umum (default)",
+    kw: ["corporate","company profile","business","proposal","general","slide deck","catalog presentation"],
+    behance: "https://www.behance.net/gallery/241280717/Corporate-Polished-Deck",
+    tag: "CORPORATE DECK POLISH",
+    cred: "corporate templates, business presentations, and branded PowerPoint decks",
+    noun: "presentation", audience: "client",
+    detail: "organizing the visuals into a clear slide flow and improving overall design quality with stronger visual hierarchy and refined layouts"
+  },
+  investor: {
+    label: "Investor / Pitch Deck",
+    kw: ["investor","pitch deck","pitch","raise","seed","pre-seed","series a","series b","fundrais","venture","term sheet","demo day","vc"],
+    behance: "https://www.behance.net/gallery/240954323/Investor-Pitch-Deck",
+    tag: "PITCH DECK REFINEMENT FOR INVESTORS",
+    cred: "startup pitch decks, investor decks, and fundraising presentations",
+    noun: "pitch deck", audience: "investor",
+    detail: "improving both content structure and visual design with strong storytelling, polished layouts, and compelling visual hierarchy"
+  },
+  saas: {
+    label: "SaaS / Teknologi",
+    kw: ["saas","software","tech","platform","app ","application","product demo","cybersecurity","ai","b2b","enterprise software","api"],
+    behance: "https://www.behance.net/gallery/237093537/Real-Estate-Presentation",
+    tag: "SAAS SALES DECK",
+    cred: "SaaS, technology, and enterprise-focused presentations",
+    noun: "sales deck", audience: "enterprise buyer",
+    detail: "transforming complex concepts into clear, persuasive visuals with a clean, modern design and highly scannable layouts"
+  },
+  fintech: {
+    label: "Finance / Fintech / Dokumen",
+    kw: ["finance","financial","fintech","bank","report","document","word","formatting","accounting","budget"],
+    behance: "https://www.behance.net/gallery/240325311/Fintech-Banking-Presentation",
+    tag: "FINTECH DECK & DOCUMENT POLISH",
+    cred: "financial, investor, and corporate communication materials",
+    noun: "presentation", audience: "stakeholder",
+    detail: "applying a consistent visual style, typography, and layout system while improving spacing, table formatting, and overall readability"
+  },
+  wealth: {
+    label: "Wealth / Acquisition / Enterprise Product",
+    kw: ["wealth","acquisition","portfolio","m&a","merger","private equity","high-end","luxury","institutional","enterprise product"],
+    behance: "https://www.behance.net/gallery/240537615/High-End-Wealth-Pitch-Presentation",
+    tag: "ENTERPRISE PRODUCT DECK REDESIGN",
+    cred: "investor, financial, and business presentations",
+    noun: "presentation", audience: "buyer",
+    detail: "transforming your business, growth story, and strategic value into a professionally structured deck with premium design and clear messaging"
+  },
+  academic: {
+    label: "Academic / Education / Training / Conference",
+    kw: ["academic","conference","education","course","training","university","research","lecture","school","workshop","webinar","policy","sop"],
+    behance: "https://www.behance.net/gallery/239951015/Course-Presentation",
+    tag: "ACADEMIC POWERPOINT DESIGN",
+    cred: "academic presentations, conference decks, and data-driven PowerPoint designs",
+    noun: "presentation", audience: "audience",
+    detail: "professional visual storytelling, infographics, timelines, and polished layouts that make the content clear and engaging"
+  },
+  medical: {
+    label: "Medical / Healthcare / Pharma",
+    kw: ["medical","health","healthcare","pharma","clinical","patient","hospital","biotech","nurse","doctor"],
+    behance: "https://www.behance.net/gallery/239680335/Medical-Pitch-Deck",
+    tag: "HEALTHCARE PRESENTATION DESIGN",
+    cred: "healthcare, pharmaceutical, and medical presentations",
+    noun: "deck", audience: "healthcare audience",
+    detail: "simplifying complex medical content with clear visual hierarchy, icons, and infographics designed for healthcare audiences"
+  },
+  template: {
+    label: "Template / Master / Brand System",
+    kw: ["template","master","slide master","reusable","brand system","figma to powerpoint","style guide","brand guide","library","layouts"],
+    behance: "https://www.behance.net/gallery/241280717/Corporate-Polished-Deck",
+    tag: "EDITABLE POWERPOINT MASTER TEMPLATE",
+    cred: "PowerPoint master templates, branded slide libraries, and fully editable Slide Master systems",
+    noun: "template", audience: "internal team",
+    detail: "building reusable layouts, master slides, chart and table styles, and brand-consistent formats that are easy for your team to edit and use"
+  },
+  creative: {
+    label: "Creative / Themed / Event",
+    kw: ["whimsical","creative","themed","playful","event","wedding","magical","fun","illustration","animation","alice"],
+    behance: "https://www.behance.net/gallery/229016783/Creative-Business-Presentation",
+    tag: "CREATIVE PRESENTATION DESIGN",
+    cred: "custom PowerPoint templates, themed presentation designs, and visually engaging slide experiences",
+    noun: "presentation", audience: "audience",
+    detail: "whimsical visuals, smooth animations, and imaginative slide layouts that capture the essence of your theme"
+  }
+};
+
+/* ===== ACTION verbs ===== */
+const ACTION_KW = {
+  polish:   ["polish","clean up","cleanup","tidy","touch up","refine layout","spruce"],
+  redesign: ["redesign","rework","revamp","makeover","modernize","refresh","overhaul"],
+  expand:   ["expand","add slides","add layouts","extend template","more slides"],
+  convert:  ["convert","figma to","transfer","turn into","render to","ai render"],
+  create:   ["create","build","design from scratch","make a","develop","need a new"],
+  refine:   ["refine","improve","enhance","sharpen"]
+};
+const ACTION_PHRASE = {
+  transform: "transform your {NOUN} into a polished, {AUD}-ready presentation by refining typography, visual hierarchy, spacing, layout consistency, and brand alignment",
+  polish:    "polish your {NOUN} by improving spacing, alignment, typography, chart consistency, and overall slide flow while keeping your existing content and narrative",
+  redesign:  "redesign your {NOUN} into a clean, modern, and visually engaging presentation with stronger visual hierarchy, refined layouts, and consistent branding",
+  refine:    "refine your {NOUN} by {DETAIL}",
+  create:    "create your {NOUN} by transforming your content into clean, well-structured layouts with strong visual hierarchy and a polished, professional design",
+  expand:    "expand your {NOUN} by adding new slide layouts, optimizing the existing structure, and ensuring all elements are fully editable, reusable, and brand-aligned",
+  convert:   "convert your {NOUN} into a fully editable, production-ready presentation with accurate design fidelity, structured Slide Masters, and reusable layouts"
+};
+
+/* ===== CTA pool (untuk variasi) ===== */
+const CTA = [
+  "Please share the current {NOUN} and brand assets, and I'll review them right away.",
+  "You can simply send your content, brand assets, and references, and I'll review everything and suggest the best approach.",
+  "Once you share the materials and brand guidelines, I can refine the {NOUN} with stronger layouts and a more polished design.",
+  "Please share your materials, and I can structure them into a clear, professional, presentation-ready {NOUN}."
+];
+const CLOSER = ["Looking forward to collaborating with you.", "Looking forward to working with you."];
+
+/* ===== STATE ===== */
+let varSeed = 0;
+
+/* ===== Bridge ke Claude lokal (localhost) + kode pairing ===== */
+// Jika halaman ini DILAYANI oleh bridge (localhost), token disuntik & alamat = relatif.
+// Jika dibuka dari website (Vercel), bridge ada di http://localhost:8787 dan butuh kode pairing.
+const BRIDGE = (typeof window.__BRIDGE_LOCAL__ !== "undefined") ? "" : "http://localhost:8787";
+let PAIR = (window.__BRIDGE_TOKEN__ || localStorage.getItem("clgen_pair") || "").toUpperCase();
+function setPair(code) { PAIR = (code || "").trim().toUpperCase(); localStorage.setItem("clgen_pair", PAIR); }
+function authHeaders(extra) { const h = Object.assign({}, extra || {}); if (PAIR) h["X-Pair-Token"] = PAIR; return h; }
+
+/* ===== UI wiring ===== */
+const $ = id => document.getElementById(id);
+const catSel = $("category");
+catSel.innerHTML = '<option value="auto">Auto-detect</option>' +
+  Object.entries(CATEGORIES).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join("");
+
+document.querySelectorAll("#software .chip").forEach(c =>
+  c.addEventListener("click", () => { c.classList.toggle("on"); }));
+document.querySelectorAll("#style .chip").forEach(c =>
+  c.addEventListener("click", () => {
+    document.querySelectorAll("#style .chip").forEach(x => x.classList.remove("on"));
+    c.classList.add("on");
+  }));
+document.querySelectorAll("#opts .chip").forEach(c =>
+  c.addEventListener("click", () => c.classList.toggle("on")));
+document.querySelectorAll("#engine .chip").forEach(c =>
+  c.addEventListener("click", () => {
+    document.querySelectorAll("#engine .chip").forEach(x => x.classList.remove("on"));
+    c.classList.add("on");
+    const ai = c.dataset.engine === "ai";
+    $("model").style.display = ai ? "block" : "none";
+    $("gen").textContent = ai ? "✨ Buat Cover Letter (AI)" : "⚡ Buat Cover Letter";
+    if (ai) pingAI();
+  }));
+function getEngine() { return document.querySelector("#engine .chip.on").dataset.engine; }
+function getModel() { return $("model").value; }
+
+function getSoftware() {
+  const sw = [...document.querySelectorAll("#software .chip.on")].map(c => c.dataset.sw);
+  return sw.length ? sw : ["PowerPoint"];
+}
+function getStyle() { return document.querySelector("#style .chip.on").dataset.style; }
+function optOn(name) { return !!document.querySelector(`#opts .chip.on[data-opt="${name}"]`); }
+
+/* ===== Detection ===== */
+function detectCategory(text) {
+  text = (text || "").toLowerCase();
+  let best = "corporate", score = 0;
+  for (const [key, c] of Object.entries(CATEGORIES)) {
+    let s = 0;
+    for (const w of c.kw) if (text.includes(w)) s += (w.length > 5 ? 2 : 1);
+    if (s > score) { score = s; best = key; }
+  }
+  return { key: best, score };
+}
+function detectAction(text, catKey) {
+  text = (text || "").toLowerCase();
+  for (const [act, kws] of Object.entries(ACTION_KW))
+    for (const w of kws) if (text.includes(w)) return act;
+  if (catKey === "template") return "create";
+  if (catKey === "investor") return "refine";
+  return "transform";
+}
+
+/* ===== Helpers ===== */
+function softwarePhrase(sw) {
+  const usable = sw.filter(s => s !== "Word/PDF");
+  if (!usable.length) return "";
+  if (usable.length === 1) return usable[0];
+  if (usable.length === 2) return usable.join(" and ");
+  return usable.slice(0, -1).join(", ") + ", and " + usable.slice(-1);
+}
+function pick(arr, seed) { return arr[Math.abs(seed) % arr.length]; }
+function softTag(sw, baseTag, turnaround) {
+  let t = baseTag;
+  if (turnaround) t += " · DELIVERED WITHIN " + turnaround.toUpperCase();
+  return t;
+}
+
+/* ===== Generator ===== */
+function generate() {
+  const client = $("client").value.trim();
+  const title = $("title").value.trim();
+  const desc = $("desc").value.trim();
+  const turnaround = $("turnaround").value.trim();
+  const bid = $("bid").value.trim();
+  const sw = getSoftware();
+  const style = getStyle();
+  const combined = title + " " + desc;
+
+  // category
+  let catKey = catSel.value;
+  let detInfo;
+  if (catKey === "auto") { detInfo = detectCategory(combined); catKey = detInfo.key; }
+  else detInfo = { key: catKey, score: -1 };
+  const cat = CATEGORIES[catKey];
+
+  // action
+  let act = $("action").value;
+  if (act === "auto") act = detectAction(combined, catKey);
+
+  // doc vs slide nouns
+  const isDoc = sw.includes("Word/PDF");
+  const noun = isDoc && cat.noun === "presentation" ? "document" : cat.noun;
+  const sampleWord = isDoc ? "PAGE" : (catKey === "template" ? "TEMPLATE" : "SLIDE");
+
+  const greet = client ? `Hi ${client},` : "Hi,";
+  const swPhrase = softwarePhrase(sw);
+
+  let phrase = (ACTION_PHRASE[act] || ACTION_PHRASE.transform)
+    .replace("{NOUN}", noun)
+    .replace("{AUD}", cat.audience)
+    .replace("{DETAIL}", cat.detail);
+  // sometimes graft the category-specific detail in for extra tailoring
+  if (act === "transform" && (varSeed % 2 === 1)) {
+    phrase = `transform your ${noun} by ${cat.detail}`;
+  }
+  let valueSentence = `I'd love to help ${phrase}`;
+  if (swPhrase && !isDoc) valueSentence += ` while keeping it fully editable in ${swPhrase}`;
+  valueSentence += ".";
+
+  let letter;
+
+  if (style === "expert") {
+    /* ----- Gaya kasual (bid 26–47) ----- */
+    const portfolio = (detInfo.score === 0) ? PROFILE.general : cat.behance;
+    const lines = [
+      greet, "",
+      valueSentence, "",
+      `I'm ${PROFILE.name}, a presentation design expert who helps clients from any industry turn ideas into impactful presentations. With ${PROFILE.years} years of experience and over ${PROFILE.projects} completed projects, I'm proficient in PowerPoint, Canva, Google Slides, and Keynote.`, "",
+      "Feel free to check my portfolio below:",
+      portfolio, "",
+    ];
+    if (bid) lines.push(`Proposed: ${bid}.`, "");
+    if (optOn("freesample"))
+      lines.push(`I'm happy to share a FREE SAMPLE ${sampleWord} showcasing my design approach. Feel free to reach out!`, "");
+    lines.push("Best regards,", PROFILE.fullName);
+    letter = lines.join("\n");
+  } else {
+    /* ----- Gaya terstruktur (bid 2–19) — sinyal terkuat ----- */
+    const lines = [];
+    if (optOn("hook")) {
+      lines.push(`FREE SAMPLE ${sampleWord} AVAILABLE - ${softTag(sw, cat.tag, turnaround)}`, "");
+    }
+    lines.push(greet, "");
+    lines.push(valueSentence, "");
+    lines.push(`I have ${PROFILE.years} years of experience in presentation design and have completed ${PROFILE.projects} projects, including ${cat.cred}.`, "");
+    lines.push(`Relevant project samples:`, cat.behance, "");
+    if (bid) lines.push(`Proposed scope: ${bid}.`, "");
+    lines.push(pick(CTA, varSeed).replace("{NOUN}", noun));
+    lines.push(pick(CLOSER, varSeed + 1), "");
+    lines.push("Best regards,", PROFILE.name);
+    letter = lines.join("\n");
+  }
+
+  if (optOn("pdf")) letter += "\n\n" + PROFILE.pdf;
+
+  // render
+  $("out").textContent = letter;
+  $("wc").textContent = letter.trim().split(/\s+/).filter(Boolean).length;
+  $("cc").textContent = letter.length;
+  $("catLabel").innerHTML = `Kategori: <b style="color:var(--ink)">${cat.label}</b> · Aksi: <b style="color:var(--ink)">${act}</b>`;
+
+  const auto = catSel.value === "auto";
+  $("detected").innerHTML = auto
+    ? `Terdeteksi: <b>${cat.label}</b> ${detInfo.score === 0 ? "(skor rendah → fallback umum)" : `(skor ${detInfo.score})`} · Behance: <b>${cat.behance.split("/").pop()}</b>`
+    : `Kategori manual: <b>${cat.label}</b>`;
+}
+
+/* ===== AI mode (jembatan ke Claude lokal via localhost) ===== */
+let BRIDGE_UP = false, PAIR_OK = false;
+
+async function pingAI() {
+  const el = $("aiStatus");
+  // 1) bridge hidup?
+  try {
+    const r = await fetch(BRIDGE + "/health", { cache: "no-store" });
+    BRIDGE_UP = r.ok;
+  } catch (e) { BRIDGE_UP = false; }
+
+  if (!BRIDGE_UP) {
+    PAIR_OK = false;
+    el.innerHTML = (location.protocol === "file:")
+      ? '<b style="color:#b26a00">● Bridge mati — buka lewat http://localhost:8787</b>'
+      : '<b style="color:#b26a00">● Bridge Claude lokal tidak terdeteksi (jalankan start-generator.bat)</b>';
+    updateConnectBox();
+    return false;
+  }
+
+  // 2) kode pairing benar?
+  PAIR_OK = false;
+  if (PAIR) {
+    try {
+      const r = await fetch(BRIDGE + "/ping-auth", { cache: "no-store", headers: authHeaders() });
+      PAIR_OK = r.ok;
+    } catch (e) { PAIR_OK = false; }
+  }
+
+  el.innerHTML = PAIR_OK
+    ? '<b style="color:var(--green-dark)">● Terhubung ke Claude lokal ✓</b>'
+    : '<b style="color:#b26a00">● Bridge hidup, tapi belum terhubung — masukkan kode pairing</b>';
+  updateConnectBox();
+  return PAIR_OK;
+}
+
+function updateConnectBox() {
+  // Tampilkan kotak pairing hanya saat: dibuka dari website (bukan lokal),
+  // mesin AI dipilih, dan belum terhubung.
+  const needConnect = !window.__BRIDGE_LOCAL__ && getEngine() === "ai" && !PAIR_OK;
+  $("connectBox").style.display = needConnect ? "block" : "none";
+  if (PAIR) $("pairCode").value = PAIR;
+}
+
+async function doConnect() {
+  setPair($("pairCode").value);
+  $("pairStatus").textContent = "Menghubungkan…";
+  await pingAI();
+  $("pairStatus").innerHTML = PAIR_OK
+    ? '<b style="color:var(--green-dark)">Terhubung ✓</b>'
+    : (BRIDGE_UP ? '<b style="color:#c0392b">Kode salah — cek lagi di terminal.</b>'
+                 : '<b style="color:#c0392b">Bridge belum jalan. Jalankan start-generator.bat dulu.</b>');
+}
+
+async function aiGenerate(vary) {
+  const body = {
+    client: $("client").value.trim(),
+    title: $("title").value.trim(),
+    desc: $("desc").value.trim(),
+    turnaround: $("turnaround").value.trim(),
+    bid: $("bid").value.trim(),
+    software: getSoftware(),
+    style: getStyle(),
+    category: catSel.value,
+    hook: optOn("hook"),
+    pdf: optOn("pdf"),
+    model: getModel(),
+    vary: !!vary
+  };
+  if (!body.title && !body.desc) { $("out").textContent = "Isi judul atau deskripsi pekerjaan dulu."; return; }
+
+  $("gen").disabled = $("vary").disabled = true;
+  $("out").textContent = vary
+    ? "⏳ Menulis ulang versi yang berbeda lewat Claude…"
+    : "⏳ Claude sedang membaca isi job & menulis proposal… (biasanya 5–20 detik)";
+  try {
+    const r = await fetch(BRIDGE + "/generate", {
+      method: "POST",
+      headers: authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+    if (!r.ok || data.error) throw new Error(data.error || ("HTTP " + r.status));
+    let text = (data.text || "").trim();
+    if (body.pdf && !/Portofolio\.pdf/i.test(text)) text += "\n\n" + PROFILE.pdf;
+    $("out").textContent = text;
+    $("wc").textContent = text.trim().split(/\s+/).filter(Boolean).length;
+    $("cc").textContent = text.length;
+    $("catLabel").innerHTML = `Mesin: <b style="color:var(--ink)">AI Claude (${body.model})</b>`;
+    $("detected").innerHTML = `✅ Ditulis Claude dari isi job — klik <b>Variasikan</b> untuk versi berbeda.`;
+  } catch (e) {
+    if (!BRIDGE_UP) {
+      $("out").textContent =
+        "⚠ Bridge Claude lokal belum jalan.\n\n" +
+        "Mode AI memakai Claude di KOMPUTERMU sendiri (tanpa API key).\n\n" +
+        "Cara menyalakan:\n" +
+        "1) Dobel-klik  start-generator.bat  (atau:  node generator-server.mjs)\n" +
+        "2) Salin KODE PAIRING yang muncul di terminal.\n" +
+        "3) Klik \"Hubungkan Claude lokal\" di atas, tempel kodenya.\n" +
+        "4) Buat Cover Letter (AI).";
+    } else if (!PAIR_OK) {
+      $("out").textContent =
+        "⚠ Belum terhubung. Tempel KODE PAIRING dari terminal di tombol \"Hubungkan Claude lokal\" di atas.";
+    } else {
+      $("out").textContent =
+        "⚠ Gagal memanggil Claude:\n" + e.message + "\n\n" +
+        "Pastikan Claude Code sudah login (jalankan `claude` sekali di terminal), lalu coba lagi.";
+    }
+  } finally {
+    $("gen").disabled = $("vary").disabled = false;
+  }
+}
+
+/* ===== Buttons ===== */
+$("gen").addEventListener("click", () => {
+  if (getEngine() === "ai") aiGenerate(false);
+  else { varSeed = 0; generate(); }
+});
+$("vary").addEventListener("click", () => {
+  if (getEngine() === "ai") aiGenerate(true);
+  else { varSeed++; generate(); }
+});
+
+$("copy").addEventListener("click", async () => {
+  const t = $("out").textContent;
+  try { await navigator.clipboard.writeText(t); showToast("Tersalin ke clipboard ✓"); }
+  catch { const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); showToast("Tersalin ✓"); }
+});
+$("download").addEventListener("click", () => {
+  const blob = new Blob([$("out").textContent], { type: "text/plain" });
+  const a = document.createElement("a");
+  const slug = ($("title").value.trim() || "upwork-cover-letter").toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40);
+  a.href = URL.createObjectURL(blob); a.download = slug + ".txt"; a.click();
+});
+
+function showToast(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 1600);
+}
+
+// auto-regenerate saat mengetik (debounce) — hanya untuk mesin Aturan
+let deb;
+["title","desc","client","turnaround","bid"].forEach(id =>
+  $(id).addEventListener("input", () => { clearTimeout(deb); deb = setTimeout(() => { if (getEngine() === "rules" && $("out").textContent.trim() && $("out").textContent !== "Hasil akan muncul di sini…") generate(); }, 350); }));
+[catSel, $("action")].forEach(el => el.addEventListener("change", () => { if (getEngine() === "rules") generate(); }));
+
+/* ===== Knowledge Base editor ===== */
+function kbMeta() { $("kbMeta").textContent = $("kbText").value.length + " karakter"; }
+$("kbText").addEventListener("input", kbMeta);
+
+async function kbLoad() {
+  if (!BRIDGE_UP || !PAIR_OK) {
+    $("kbText").value = "";
+    $("kbText").disabled = true;
+    $("kbStatus").innerHTML = '<b style="color:#b26a00">Editor KB butuh koneksi ke Claude lokal — nyalakan bridge & masukkan kode pairing dulu.</b>';
+    kbMeta();
+    return;
+  }
+  try {
+    const r = await fetch(BRIDGE + "/kb", { cache: "no-store", headers: authHeaders() });
+    const d = await r.json();
+    $("kbText").disabled = false;
+    $("kbText").value = d.kb || "";
+    $("kbStatus").innerHTML = d.isCustom
+      ? '<b style="color:var(--green-dark)">● Memakai versi kustom tersimpan</b>'
+      : '● Memakai versi bawaan';
+    kbMeta();
+  } catch (e) {
+    $("kbStatus").innerHTML = '<b style="color:#b26a00">Gagal memuat (server AI mati?).</b>';
+  }
+}
+
+$("kbToggle").addEventListener("click", async () => {
+  const open = $("kbpanel").style.display !== "none";
+  if (open) { $("kbpanel").style.display = "none"; return; }
+  $("kbpanel").style.display = "block";
+  await kbLoad();
+  $("kbpanel").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+$("kbReload").addEventListener("click", kbLoad);
+
+$("kbSave").addEventListener("click", async () => {
+  if ($("kbText").disabled) return;
+  try {
+    const r = await fetch(BRIDGE + "/kb", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ kb: $("kbText").value }) });
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.error || "gagal");
+    $("kbStatus").innerHTML = d.reset
+      ? '● Memakai versi bawaan'
+      : '<b style="color:var(--green-dark)">● Memakai versi kustom tersimpan</b>';
+    showToast(d.reset ? "KB direset ke bawaan ✓" : "Knowledge Base tersimpan ✓");
+  } catch (e) { showToast("Gagal menyimpan KB"); }
+});
+
+$("kbReset").addEventListener("click", async () => {
+  if ($("kbText").disabled) return;
+  if (!confirm("Reset Knowledge Base ke versi bawaan? Perubahan yang kamu simpan akan hilang.")) return;
+  try {
+    await fetch(BRIDGE + "/kb", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ kb: "" }) });
+    await kbLoad();
+    showToast("KB direset ke bawaan ✓");
+  } catch (e) { showToast("Gagal reset KB"); }
+});
+
+/* ===== Tombol Hubungkan Claude lokal ===== */
+$("pairBtn").addEventListener("click", doConnect);
+$("pairCode").addEventListener("keydown", (e) => { if (e.key === "Enter") doConnect(); });
+
+// cek status bridge + pairing saat load
+pingAI();
+
+// demo awal
+$("title").value = "PowerPoint Slide Deck Designer Needed - Polish Startup Pitch Deck";
+$("desc").value = "We have an AI-generated startup pitch deck that needs to be tidied and brand-aligned for investors. Keep it editable in PowerPoint. Quick turnaround preferred.";
+$("client").value = "Suresh";
+$("turnaround").value = "48 hours";
+generate();
+</script>
+</body>
+</html>
