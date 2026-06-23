@@ -10,8 +10,14 @@ cd "$(dirname "$0")" || exit 1
 echo "Menjalankan server AI (pakai login Claude Code, tanpa API key)..."
 echo
 
-# Buka browser ke halaman lokal setelah server sempat hidup
-( sleep 2; open "http://localhost:8787" ) >/dev/null 2>&1 &
+# Buka browser HANYA kalau index.html ada (mode lokal penuh).
+# Kalau cuma pakai website (tanpa index.html), jangan buka apa-apa — diam saja.
+if [ -f index.html ]; then
+  ( sleep 2; open "http://localhost:8787" ) >/dev/null 2>&1 &
+else
+  echo "Mode bridge-only: buka website-mu, lalu Hubungkan pakai KODE PAIRING di bawah."
+  echo
+fi
 
 node generator-server.mjs
 

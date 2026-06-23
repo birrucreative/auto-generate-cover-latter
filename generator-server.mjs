@@ -261,7 +261,16 @@ const server = http.createServer(async (req, res) => {
       html = html.includes('</head>') ? html.replace('</head>', inject + '\n</head>') : inject + html;
       send(200, 'text/html; charset=utf-8', html);
     } catch {
-      send(500, 'text/plain', 'index.html tidak ditemukan di folder yang sama.');
+      // Tidak ada index.html di sini (mode bridge-only, dipakai dengan website).
+      // Jangan tampilkan error — beri halaman status yang tenang + kode pairing.
+      send(200, 'text/html; charset=utf-8',
+        '<!doctype html><meta charset="utf-8"><title>Bridge aktif</title>' +
+        '<body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:480px;margin:56px auto;padding:0 22px;color:#0f1419;line-height:1.6">' +
+        '<h2 style="color:#14a800;margin-bottom:6px">● Bridge Claude aktif</h2>' +
+        '<p style="margin-top:0;color:#5e6b73">Halaman ini tidak perlu dibuka.</p>' +
+        '<p>Buka <b>website generator</b>-mu, pilih mesin <b>AI Claude</b>, lalu tempel kode pairing ini:</p>' +
+        '<p style="font-size:30px;font-weight:800;letter-spacing:3px;background:#f0f7ee;border:1px solid #d6ecd0;border-radius:10px;padding:16px;text-align:center;margin:14px 0">' + PAIR_TOKEN + '</p>' +
+        '<p style="color:#5e6b73;font-size:13px">Biarkan jendela terminal tetap terbuka selama memakai mode AI.</p></body>');
     }
     return;
   }
