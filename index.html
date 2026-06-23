@@ -110,6 +110,12 @@
   details.tips summary { cursor: pointer; font-weight: 600; color: var(--ink); }
   details.tips li { margin: 4px 0; }
   .small { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .dlbtn {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
+    text-decoration: none; color: var(--ink); border: 1px solid var(--line);
+    background: #fff; padding: 6px 10px; border-radius: 8px; transition: all .12s;
+  }
+  .dlbtn:hover { border-color: var(--green); color: var(--green-dark); }
 </style>
 </head>
 <body>
@@ -207,7 +213,16 @@
         <div class="small" id="engineNote">Aturan = instan &amp; offline (template). AI = Claude membaca isi job lalu menulis benar-benar tailored — pakai login Claude-mu, tanpa API key. <span id="aiStatus"></span></div>
 
         <div id="connectBox" style="display:none; margin-top:10px; padding:11px; border:1px solid var(--line); border-radius:9px; background:#fbfcfc">
-          <div class="small" style="margin-bottom:7px"><b>Hubungkan Claude lokal:</b> jalankan <b>start-generator.bat</b> di komputermu, lalu tempel <b>KODE PAIRING</b> yang muncul di terminal.</div>
+          <div class="small" style="margin-bottom:7px"><b>Hubungkan Claude lokal:</b> jalankan launcher di komputermu (Windows: <b>start-generator.bat</b> · Mac: <b>start-generator.command</b>), lalu tempel <b>KODE PAIRING</b> dari terminal ke kolom di bawah.</div>
+
+          <div class="small" style="margin-bottom:4px">Belum punya file-nya? Unduh ketiganya ke <b>satu folder</b>, lalu jalankan launcher sesuai OS:</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px">
+            <a class="dlbtn" href="generator-server.mjs" download>⬇ generator-server.mjs <span style="color:var(--muted)">(wajib)</span></a>
+            <a class="dlbtn" href="start-generator.bat" download>⬇ Windows (.bat)</a>
+            <a class="dlbtn" href="start-generator.command" download>⬇ Mac (.command)</a>
+          </div>
+          <div class="small" style="margin:-4px 0 10px">Prasyarat: Node.js + Claude Code sudah login. Mac: sekali jalankan <code>chmod +x start-generator.command</code>.</div>
+
           <div style="display:flex; gap:8px; flex-wrap:wrap">
             <input type="text" id="pairCode" placeholder="cth: A1B2C3D4" style="flex:1; min-width:120px; text-transform:uppercase" />
             <button class="primary" id="pairBtn" style="padding:9px 16px">Hubungkan</button>
@@ -274,8 +289,9 @@
     </div>
     <div class="body">
       <div class="small" style="margin-bottom:8px">
-        Ini yang dibaca AI saat menulis: <b>profil &amp; kredibilitas, anatomi proposal, peta link Behance, aturan gaya, dan contoh bid asli</b>.
-        Edit bebas lalu <b>Simpan</b> — berlaku untuk semua proposal mode AI berikutnya. Instruksi teknis "output hanya surat" tetap terkunci otomatis, jadi aman diubah.
+        Ini yang dibaca AI saat menulis: <b>profil &amp; kredibilitas, anatomi proposal, peta link Behance, aturan gaya, dan contoh bid</b>.
+        <b>Untuk banyak orang / banyak akun Upwork:</b> ganti isi di bawah dengan <b>profil, bid, dan link portofolio AKUN KAMU SENDIRI</b>, lalu <b>Simpan</b>.
+        Tersimpan <b>di browser ini</b> (localStorage) — jalan <b>offline</b>, tanpa perlu bridge, dan dipakai otomatis tiap generate mode AI. Tiap orang/browser punya profilnya sendiri. Instruksi teknis "output hanya surat" tetap terkunci otomatis.
         <span id="kbStatus"></span>
       </div>
       <textarea id="kbText" style="min-height:440px; font-family:'SF Mono','Cascadia Code',Consolas,monospace; font-size:12.5px; line-height:1.5;" spellcheck="false"></textarea>
@@ -285,6 +301,137 @@
 </div>
 
 <div class="toast" id="toast">Tersalin ke clipboard ✓</div>
+
+<!-- KB bawaan (contoh: Cintha). Disimpan sebagai data agar tersedia OFFLINE.
+     Tiap pengguna mengganti dengan profil/bid Upwork-nya sendiri; tersimpan di browser masing-masing. -->
+<script type="text/plain" id="defaultKB">=== FREELANCER PROFILE ===
+Name: Cintha (full: Cintha Fryanda). Headline: Pitch Deck & Presentation Designer | Clean Slides That Close Deals.
+Top Rated, 91% Job Success, 4.8/5 (66 reviews), 96 jobs, $20/hr. Based in Semarang, Indonesia.
+Credibility facts (use consistently): 6 years of experience in presentation design; completed 1,200+ projects.
+Tools: PowerPoint, Google Slides, Canva, Keynote.
+Specialties: pitch decks, investor decks, SaaS/sales decks, corporate templates & Slide Master systems, financial/fintech decks, academic/conference decks, healthcare decks, document-to-deck conversion, infographics.
+
+=== PROPOSAL ANATOMY (follow this skeleton) ===
+1. Hook line in ALL CAPS (only if requested): "FREE SAMPLE SLIDE AVAILABLE - <SHORT PROJECT TAG>" (use PAGE instead of SLIDE for Word/PDF jobs; TEMPLATE for template jobs). Add a turnaround like " - DELIVERED WITHIN 48 HOURS" ONLY when a turnaround is explicitly given in the settings; never invent or assume one.
+2. Greeting: "Hi <ClientFirstName>," if a name is given, else "Hi,".
+3. Tailored value sentence: "I'd love to help [transform/polish/redesign/refine/create/expand/convert] your [deck/presentation/template/document] by [SPECIFIC actions tied to THIS job] while keeping it fully editable in [the requested tool]." This sentence MUST name at least one concrete specific from the job (the real deliverable, product/company name, slide count, audience, deadline, or theme).
+4. Credibility line: "I have 6 years of experience in presentation design and have completed 1,200+ projects, including [a short list tailored to the job's industry]."
+5. Proof: "Relevant project samples:" then ONE Behance link chosen from the map below to match the job.
+6. Soft CTA: ask for the current deck/brand assets and offer to review right away, then "Looking forward to collaborating with you."
+7. Sign-off: "Best regards," newline "Cintha".
+
+=== BEHANCE LINK MAP (pick the ONE best match) ===
+- Corporate / general / company profile / business: https://www.behance.net/gallery/241280717/Corporate-Polished-Deck
+- Investor / pitch deck / fundraising: https://www.behance.net/gallery/240954323/Investor-Pitch-Deck
+- SaaS / technology / B2B / cybersecurity / AI: https://www.behance.net/gallery/237093537/Real-Estate-Presentation
+- Finance / fintech / banking / financial report / document formatting: https://www.behance.net/gallery/240325311/Fintech-Banking-Presentation
+- Wealth / acquisition / M&A / high-end / institutional: https://www.behance.net/gallery/240537615/High-End-Wealth-Pitch-Presentation
+- Academic / education / course / training / conference / research: https://www.behance.net/gallery/239951015/Course-Presentation
+- Medical / healthcare / pharma / clinical: https://www.behance.net/gallery/239680335/Medical-Pitch-Deck
+- Template / Slide Master / brand system / Figma-to-PPT: https://www.behance.net/gallery/241280717/Corporate-Polished-Deck
+- Creative / themed / event / whimsical: https://www.behance.net/gallery/229016783/Creative-Business-Presentation
+
+=== STYLE RULES ===
+- "structured" style = use the full anatomy above (hook + tailored value + credibility line + "Relevant project samples:" + matched Behance + soft CTA + sign-off). This is the strongest, most tailored style. Default to this.
+- "expert" style = warmer/lighter: greeting, one tailored value sentence, then "I'm Cintha, a presentation design expert who helps clients from any industry turn ideas into impactful presentations. With 6 years of experience and over 1,200 completed projects, I'm proficient in PowerPoint, Canva, Google Slides, and Keynote.", then "Feel free to check my portfolio below:" + the matched Behance link, then offer a FREE SAMPLE SLIDE, then "Best regards," / "Cintha Fryanda".
+- Length ~110-170 words. Natural, confident, specific — never generic filler. Tie every claim to the job.
+- Plain text only. Real line breaks between blocks. No bullet symbols unless natural. No bold/headers/markdown.
+
+=== REAL EXAMPLES (the freelancer's actual winning voice) ===
+
+[Example A — pitch deck polish, named client, structured]
+FREE SAMPLE SLIDE AVAILABLE - DELIVERED WITHIN 48 HOURS.
+
+DECK POLISH
+Hi Suresh,
+
+I'd love to help transform your AI-generated startup pitch deck into a polished, customer-ready presentation by refining typography, visual hierarchy, spacing, layout consistency, and brand alignment while keeping the deck fully editable in PowerPoint.
+
+I have 6 years of experience in presentation design and have completed 1,200+ projects, including startup pitch decks, SaaS sales presentations, investor decks, and branded PowerPoint presentations.
+
+Relevant project samples:
+https://www.behance.net/gallery/241280717/Corporate-Polished-Deck
+
+Please share the current deck and brand assets, and I'll review them right away.
+Looking forward to collaborating with you.
+
+Best regards,
+Cintha
+
+[Example B — template expansion, named client]
+FREE SAMPLE SLIDE AVAILABLE - POWERPOINT TEMPLATE EXPANSION & OPTIMIZATION
+
+Hi Gerben,
+
+I'd love to help expand your newly rebranded PowerPoint template by adding new B2B slide layouts, optimizing the existing template structure, and ensuring all elements are fully editable, reusable, and aligned with your brand guidelines.
+
+I have 6 years of experience in presentation design and have completed 1,200+ projects, including PowerPoint template systems, branded slide libraries, corporate presentation templates, and fully editable master slide designs.
+
+Relevant project samples:
+https://www.behance.net/gallery/241280717/Corporate-Polished-Deck
+
+Please share the current template, reference deck, and brand assets, and I'll review them right away.
+Looking forward to collaborating with you.
+
+Best regards,
+Cintha
+
+[Example C — document/Word formatting, PAGE sample]
+FREE SAMPLE PAGE AVAILABLE - PROFESSIONAL FINANCIAL REPORT FORMATTING
+
+Hi David,
+
+I'd love to help transform your financial framework document into a polished, boardroom-quality report by applying the visual style, typography, colours, and design language of your existing pitch presentation while improving layout consistency, spacing, table formatting, and PDF-ready presentation without altering the content.
+
+I have 6 years of experience in presentation and document design and have completed 1,200+ projects, including financial, investor, and corporate communication materials.
+
+Relevant project samples:
+https://www.behance.net/gallery/240325311/Fintech-Banking-Presentation
+
+The final document will be clean, professionally formatted, visually consistent, and ready to share with prospective owners.
+Looking forward to collaborating with you.
+
+Best regards,
+Cintha
+
+[Example D — SaaS/B2B with a price quote]
+FREE SAMPLE SLIDE AVAILABLE - TURNING COMPLEX CYBERSECURITY INTO BUYER-READY VISUAL
+
+Hi,
+
+I'd love to help create a high-impact B2B sales deck by transforming complex cybersecurity concepts and software architecture into clear, persuasive visuals that are easy for enterprise buyers to understand, with a clean, modern design and highly scannable layouts.
+
+I have 6 years of experience in presentation design and have completed 1,200+ projects, including SaaS, technology, and enterprise-focused presentations.
+
+Relevant project samples:
+https://www.behance.net/gallery/237093537/Real-Estate-Presentation
+
+Fixed-price quote: $250 for the complete 12-slide deck.
+Estimated turnaround: 3-5 business days, including revision rounds.
+
+Looking forward to collaborating with you.
+
+Best regards,
+Cintha
+
+[Example E — academic, no client name]
+FREE SAMPLE SLIDE AVAILABLE - ACADEMIC CONFERENCE POWERPOINT DESIGN
+
+Hi,
+
+I'd love to help transform your existing academic presentation into a conference-ready PowerPoint deck with professional visual storytelling, infographics, timelines, and polished layouts designed for forensic psychologists, legal professionals, and mental health audiences.
+
+I have 6 years of experience in presentation design and have completed 1,200+ projects, including academic presentations, healthcare and research decks, conference presentations, and data-driven PowerPoint designs.
+
+Relevant project samples:
+https://www.behance.net/gallery/239951015/Course-Presentation
+
+Please share the current presentation and any conference guidelines, and I'll review them right away.
+Looking forward to collaborating with you.
+
+Best regards,
+Cintha
+</script>
 
 <script>
 /* ===== PROFILE (sumber: file referensi) ===== */
@@ -420,6 +567,13 @@ const BRIDGE = (typeof window.__BRIDGE_LOCAL__ !== "undefined") ? "" : "http://l
 let PAIR = (window.__BRIDGE_TOKEN__ || localStorage.getItem("clgen_pair") || "").toUpperCase();
 function setPair(code) { PAIR = (code || "").trim().toUpperCase(); localStorage.setItem("clgen_pair", PAIR); }
 function authHeaders(extra) { const h = Object.assign({}, extra || {}); if (PAIR) h["X-Pair-Token"] = PAIR; return h; }
+
+/* ===== Knowledge Base per-pengguna (disimpan di browser, jalan OFFLINE) =====
+   KB tiap orang/akun Upwork disimpan di localStorage browser masing-masing,
+   bisa diedit tanpa bridge, lalu DIKIRIM bersama job saat generate AI. */
+const DEFAULT_KB = (document.getElementById("defaultKB").textContent || "").trim();
+function getKB() { const k = localStorage.getItem("clgen_kb"); return (k && k.trim()) ? k : DEFAULT_KB; }
+function isCustomKB() { const k = localStorage.getItem("clgen_kb"); return !!(k && k.trim() && k.trim() !== DEFAULT_KB); }
 
 /* ===== UI wiring ===== */
 const $ = id => document.getElementById(id);
@@ -647,6 +801,7 @@ async function aiGenerate(vary) {
     hook: optOn("hook"),
     pdf: optOn("pdf"),
     model: getModel(),
+    kb: getKB(),
     vary: !!vary
   };
   if (!body.title && !body.desc) { $("out").textContent = "Isi judul atau deskripsi pekerjaan dulu."; return; }
@@ -730,59 +885,47 @@ let deb;
 function kbMeta() { $("kbMeta").textContent = $("kbText").value.length + " karakter"; }
 $("kbText").addEventListener("input", kbMeta);
 
-async function kbLoad() {
-  if (!BRIDGE_UP || !PAIR_OK) {
-    $("kbText").value = "";
-    $("kbText").disabled = true;
-    $("kbStatus").innerHTML = '<b style="color:#b26a00">Editor KB butuh koneksi ke Claude lokal — nyalakan bridge & masukkan kode pairing dulu.</b>';
-    kbMeta();
-    return;
-  }
-  try {
-    const r = await fetch(BRIDGE + "/kb", { cache: "no-store", headers: authHeaders() });
-    const d = await r.json();
-    $("kbText").disabled = false;
-    $("kbText").value = d.kb || "";
-    $("kbStatus").innerHTML = d.isCustom
-      ? '<b style="color:var(--green-dark)">● Memakai versi kustom tersimpan</b>'
-      : '● Memakai versi bawaan';
-    kbMeta();
-  } catch (e) {
-    $("kbStatus").innerHTML = '<b style="color:#b26a00">Gagal memuat (server AI mati?).</b>';
-  }
+function kbStatusLine() {
+  $("kbStatus").innerHTML = isCustomKB()
+    ? '<b style="color:var(--green-dark)">● Memakai profil kustom kamu (tersimpan di browser ini)</b>'
+    : '● Memakai contoh bawaan — ganti dengan profil & bid Upwork kamu sendiri';
 }
 
-$("kbToggle").addEventListener("click", async () => {
+// KB disimpan di localStorage browser — jalan OFFLINE, tanpa bridge.
+function kbLoad() {
+  $("kbText").disabled = false;
+  $("kbText").value = getKB();
+  kbStatusLine();
+  kbMeta();
+}
+
+$("kbToggle").addEventListener("click", () => {
   const open = $("kbpanel").style.display !== "none";
   if (open) { $("kbpanel").style.display = "none"; return; }
   $("kbpanel").style.display = "block";
-  await kbLoad();
+  kbLoad();
   $("kbpanel").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 $("kbReload").addEventListener("click", kbLoad);
 
-$("kbSave").addEventListener("click", async () => {
-  if ($("kbText").disabled) return;
-  try {
-    const r = await fetch(BRIDGE + "/kb", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ kb: $("kbText").value }) });
-    const d = await r.json();
-    if (!r.ok || d.error) throw new Error(d.error || "gagal");
-    $("kbStatus").innerHTML = d.reset
-      ? '● Memakai versi bawaan'
-      : '<b style="color:var(--green-dark)">● Memakai versi kustom tersimpan</b>';
-    showToast(d.reset ? "KB direset ke bawaan ✓" : "Knowledge Base tersimpan ✓");
-  } catch (e) { showToast("Gagal menyimpan KB"); }
+$("kbSave").addEventListener("click", () => {
+  const v = $("kbText").value;
+  if (!v.trim() || v.trim() === DEFAULT_KB) {
+    localStorage.removeItem("clgen_kb");      // sama dgn bawaan = tidak perlu simpan kustom
+    showToast("Tersimpan (sama dengan bawaan) ✓");
+  } else {
+    localStorage.setItem("clgen_kb", v);
+    showToast("Knowledge Base tersimpan di browser ini ✓");
+  }
+  kbStatusLine();
 });
 
-$("kbReset").addEventListener("click", async () => {
-  if ($("kbText").disabled) return;
-  if (!confirm("Reset Knowledge Base ke versi bawaan? Perubahan yang kamu simpan akan hilang.")) return;
-  try {
-    await fetch(BRIDGE + "/kb", { method: "POST", headers: authHeaders({ "Content-Type": "application/json" }), body: JSON.stringify({ kb: "" }) });
-    await kbLoad();
-    showToast("KB direset ke bawaan ✓");
-  } catch (e) { showToast("Gagal reset KB"); }
+$("kbReset").addEventListener("click", () => {
+  if (!confirm("Reset Knowledge Base ke contoh bawaan? Profil kustom yang kamu simpan di browser ini akan hilang.")) return;
+  localStorage.removeItem("clgen_kb");
+  kbLoad();
+  showToast("KB direset ke bawaan ✓");
 });
 
 /* ===== Tombol Hubungkan Claude lokal ===== */

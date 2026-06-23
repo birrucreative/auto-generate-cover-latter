@@ -28,7 +28,7 @@ const PAIR_TOKEN = (process.env.PAIR_TOKEN || crypto.randomBytes(4).toString('he
    Dipakai sebagai instruksi untuk Claude agar meniru suara Cintha.
    ============================================================ */
 // FIXED — instruksi teknis yang TIDAK bisa diedit dari website (jaga format output).
-const FIXED_PREAMBLE = `You are a senior Upwork proposal copywriter writing AS Cintha, a pitch deck & presentation designer. Read her profile, style rules, the Behance map, and the real examples below, then write ONE cover letter tailored to the TARGET JOB. Match her real voice and structure. Output ONLY the final cover letter text — no preamble, no markdown, no notes, no tools.`;
+const FIXED_PREAMBLE = `You are a senior Upwork proposal copywriter. Write AS the freelancer described in the FREELANCER PROFILE below — use their name, voice, credibility facts, portfolio links, and example proposals. Read their profile, style rules, portfolio map, and the real examples, then write ONE cover letter tailored to the TARGET JOB. Match their real voice and structure. Output ONLY the final cover letter text — no preamble, no markdown, no notes, no tools.`;
 
 // DEFAULT_KB — bagian yang BISA diedit user dari website (disimpan ke knowledge-base.txt).
 const DEFAULT_KB = `=== FREELANCER PROFILE ===
@@ -181,7 +181,7 @@ function buildUserPrompt(b) {
     'Include ALL-CAPS hook line: ' + (b.hook ? 'yes' : 'no'),
     '',
     '=== TASK ===',
-    'Write ONE Upwork cover letter for Cintha tailored to THIS specific job.',
+    'Write ONE Upwork cover letter in the voice of the freelancer described in the profile, tailored to THIS specific job.',
     '- Name at least one concrete specific from the description (real deliverable, product/company, slide count, audience, theme, or deadline).',
     '- Choose the single Behance link whose category best matches this job.',
     '- Tailor the credibility list to this industry.',
@@ -324,7 +324,9 @@ const server = http.createServer(async (req, res) => {
       }
       const t0 = Date.now();
       try {
-        const kb = await loadKB();
+        // Utamakan KB yang dikirim website (per-pengguna, dari localStorage);
+        // jika tidak ada, pakai file/bawaan di mesin ini.
+        const kb = (body.kb && body.kb.trim()) ? body.kb : await loadKB();
         const text = await runClaude(buildUserPrompt(body), body.model, kb);
         console.log(`[generate] ok in ${((Date.now() - t0) / 1000).toFixed(1)}s · model=${body.model || 'sonnet'} · "${(body.title || '').slice(0, 50)}"`);
         send(200, 'application/json', JSON.stringify({ text }));
