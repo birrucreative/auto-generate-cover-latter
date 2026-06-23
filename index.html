@@ -123,7 +123,7 @@
   <div class="logo">C</div>
   <div>
     <h1>Upwork Cover Letter Generator</h1>
-    <p>Cintha F. · Pitch Deck &amp; Presentation Designer — meniru gaya & struktur 47 proposal asli</p>
+    <p>Tulis cover letter Upwork yang benar-benar tailored — mode offline &amp; AI (login Claude)</p>
   </div>
   <button class="ghost" id="kbToggle" style="margin-left:auto">⚙ Knowledge Base</button>
 </header>
@@ -235,7 +235,6 @@
         <label>Opsi tambahan</label>
         <div class="chips" id="opts">
           <span class="chip on" data-opt="hook">Hook ALL CAPS</span>
-          <span class="chip on" data-opt="pdf">Lampiran PDF</span>
           <span class="chip" data-opt="freesample">Tawarkan free sample (kasual)</span>
         </div>
       </div>
@@ -440,7 +439,6 @@ const PROFILE = {
   fullName: "Cintha Fryanda",
   years: 6,
   projects: "1,200+",
-  pdf: " Cintha Presentation Portofolio.pdf(5.7 MB)",
   general: "https://www.behance.net/cintha"
 };
 
@@ -720,8 +718,6 @@ function generate() {
     letter = lines.join("\n");
   }
 
-  if (optOn("pdf")) letter += "\n\n" + PROFILE.pdf;
-
   // render
   $("out").textContent = letter;
   $("wc").textContent = letter.trim().split(/\s+/).filter(Boolean).length;
@@ -799,7 +795,6 @@ async function aiGenerate(vary) {
     style: getStyle(),
     category: catSel.value,
     hook: optOn("hook"),
-    pdf: optOn("pdf"),
     model: getModel(),
     kb: getKB(),
     vary: !!vary
@@ -819,7 +814,6 @@ async function aiGenerate(vary) {
     const data = await r.json();
     if (!r.ok || data.error) throw new Error(data.error || ("HTTP " + r.status));
     let text = (data.text || "").trim();
-    if (body.pdf && !/Portofolio\.pdf/i.test(text)) text += "\n\n" + PROFILE.pdf;
     $("out").textContent = text;
     $("wc").textContent = text.trim().split(/\s+/).filter(Boolean).length;
     $("cc").textContent = text.length;
