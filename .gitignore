@@ -6,6 +6,11 @@ Upwork-Qualifications-CinthaF.md
 # File runtime (KB kustom yang diedit dari website)
 knowledge-base.txt
 
+# Rahasia & Vercel — API key JANGAN pernah di-commit
+.env
+.env.*
+.vercel/
+
 # Node
 node_modules/
 npm-debug.log*

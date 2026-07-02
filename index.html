@@ -205,13 +205,18 @@
         <label>Mesin penulis</label>
         <div class="chips" id="engine">
           <span class="chip on" data-engine="rules">Aturan (offline)</span>
+          <span class="chip" data-engine="online">AI Online (DeepSeek)</span>
           <span class="chip" data-engine="ai">AI Claude (login)</span>
         </div>
         <select id="model" style="margin-top:8px; display:none">
           <option value="sonnet">Claude Sonnet — cepat &amp; hemat kuota (disarankan)</option>
           <option value="opus">Claude Opus — kualitas tertinggi, lebih lambat</option>
         </select>
-        <div class="small" id="engineNote">Aturan = instan &amp; offline (template). AI = Claude membaca isi job lalu menulis benar-benar tailored — pakai login Claude-mu, tanpa API key. <span id="aiStatus"></span></div>
+        <select id="modelOnline" style="margin-top:8px; display:none">
+          <option value="flash">DeepSeek Flash — cepat (disarankan)</option>
+          <option value="pro">DeepSeek Pro — kualitas tertinggi, lebih lambat</option>
+        </select>
+        <div class="small" id="engineNote">Aturan = instan &amp; offline (template). AI Online = langsung dari website, tanpa install apa pun. AI Claude = pakai login Claude di komputermu sendiri. <span id="aiStatus"></span></div>
 
         <div id="connectBox" style="display:none; margin-top:10px; padding:11px; border:1px solid var(--line); border-radius:9px; background:#fbfcfc">
           <div class="small" style="margin-bottom:7px"><b>Hubungkan Claude lokal:</b> jalankan launcher di komputermu (Windows: <b>start-generator.bat</b> · Mac: <b>start-generator.command</b>), lalu tempel <b>KODE PAIRING</b> dari terminal ke kolom di bawah.</div>
@@ -652,10 +657,14 @@ document.querySelectorAll("#engine .chip").forEach(c =>
   c.addEventListener("click", () => {
     document.querySelectorAll("#engine .chip").forEach(x => x.classList.remove("on"));
     c.classList.add("on");
-    const ai = c.dataset.engine === "ai";
-    $("model").style.display = ai ? "block" : "none";
-    $("gen").textContent = ai ? "✨ Buat Cover Letter (AI)" : "⚡ Buat Cover Letter";
-    if (ai) pingAI();
+    const eng = c.dataset.engine;
+    $("model").style.display = eng === "ai" ? "block" : "none";
+    $("modelOnline").style.display = eng === "online" ? "block" : "none";
+    $("gen").textContent = eng === "rules" ? "⚡ Buat Cover Letter" : "✨ Buat Cover Letter (AI)";
+    if (eng === "ai") pingAI();
+    else if (eng === "online") pingOnline();
+    else $("aiStatus").innerHTML = "";
+    updateConnectBox();
   }));
 function getEngine() { return document.querySelector("#engine .chip.on").dataset.engine; }
 function getModel() { return $("model").value; }
@@ -904,13 +913,83 @@ async function aiGenerate(vary) {
   }
 }
 
+/* ===== AI Online (DeepSeek via serverless /api/generate di website) =====
+   API key tersimpan di server (env DEEPSEEK_API_KEY) — tidak pernah ke browser. */
+const API_ONLINE = "/api/generate";
+const ONLINE_UNAVAILABLE =
+  "⚠ Mode AI Online hanya jalan lewat WEBSITE (Vercel).\n\n" +
+  "Halaman ini sedang dibuka secara lokal, jadi /api/generate tidak ada.\n" +
+  "Buka alamat website-mu di Vercel, atau pakai mesin \"AI Claude (login)\".";
+
+async function pingOnline() {
+  const el = $("aiStatus");
+  try {
+    const r = await fetch(API_ONLINE, { cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    el.innerHTML = d.configured
+      ? '<b style="color:var(--green-dark)">● AI Online siap ✓ (tanpa install)</b>'
+      : '<b style="color:#b26a00">● Server belum diberi API key — set DEEPSEEK_API_KEY di Vercel</b>';
+  } catch (e) {
+    el.innerHTML = '<b style="color:#b26a00">● AI Online hanya tersedia di website (Vercel), bukan saat dibuka lokal</b>';
+  }
+}
+
+async function onlineGenerate(vary) {
+  const body = {
+    client: $("client").value.trim(),
+    title: $("title").value.trim(),
+    desc: $("desc").value.trim(),
+    turnaround: $("turnaround").value.trim(),
+    bid: $("bid").value.trim(),
+    software: getSoftware(),
+    style: getStyle(),
+    category: catSel.value,
+    hook: optOn("hook"),
+    model: $("modelOnline").value,
+    kb: getKB(),
+    vary: !!vary
+  };
+  if (!body.title && !body.desc) { $("out").textContent = "Isi judul atau deskripsi pekerjaan dulu."; return; }
+
+  $("gen").disabled = $("vary").disabled = true;
+  $("out").textContent = vary
+    ? "⏳ Menulis ulang versi yang berbeda lewat DeepSeek…"
+    : "⏳ DeepSeek sedang membaca isi job & menulis proposal… (biasanya 5–15 detik)";
+  try {
+    const r = await fetch(API_ONLINE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    let data = null;
+    try { data = await r.json(); } catch (e) {}
+    if (r.status === 404 || (!r.ok && !data)) throw new Error("__unavailable__");
+    if (!r.ok || data.error) throw new Error(data.error || ("HTTP " + r.status));
+    const text = (data.text || "").trim();
+    $("out").textContent = text;
+    $("wc").textContent = text.split(/\s+/).filter(Boolean).length;
+    $("cc").textContent = text.length;
+    $("catLabel").innerHTML = `Mesin: <b style="color:var(--ink)">AI DeepSeek (${body.model})</b>`;
+    $("detected").innerHTML = `✅ Ditulis DeepSeek dari isi job — klik <b>Variasikan</b> untuk versi berbeda.`;
+  } catch (e) {
+    $("out").textContent = (e.message === "__unavailable__" || e.name === "TypeError")
+      ? ONLINE_UNAVAILABLE
+      : "⚠ Gagal memanggil AI Online:\n" + e.message;
+  } finally {
+    $("gen").disabled = $("vary").disabled = false;
+  }
+}
+
 /* ===== Buttons ===== */
 $("gen").addEventListener("click", () => {
   if (getEngine() === "ai") aiGenerate(false);
+  else if (getEngine() === "online") onlineGenerate(false);
   else { varSeed = 0; generate(); }
 });
 $("vary").addEventListener("click", () => {
   if (getEngine() === "ai") aiGenerate(true);
+  else if (getEngine() === "online") onlineGenerate(true);
   else { varSeed++; generate(); }
 });
 

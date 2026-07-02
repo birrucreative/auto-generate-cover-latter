@@ -1,12 +1,36 @@
-# Deploy ke Vercel (dipakai banyak orang, tiap orang pakai Claude-nya sendiri)
+# Deploy ke Vercel (dipakai banyak orang)
 
-Arsitektur: **website publik di Vercel** + **bridge lokal** di komputer tiap orang.
-Website cuma tampilan (statis, gratis, tanpa server). Mesin AI-nya = Claude Code
-di komputer masing-masing user, dihubungkan lewat **kode pairing**. **Tanpa API key.**
+Ada **2 jalur AI** setelah di-deploy:
+
+1. **AI Online (DeepSeek)** — jalan langsung dari website, **tanpa install apa pun** di
+   komputer user. Butuh 1 API key DeepSeek yang disimpan di server Vercel
+   (env `DEEPSEEK_API_KEY`) — key TIDAK pernah terlihat di browser.
+2. **AI Claude (login)** — bridge lokal di komputer tiap orang, pakai langganan
+   Claude Pro/Max masing-masing, tanpa API key.
 
 ```
-Website Vercel (1 URL, semua orang)  →  http://localhost:8787 (bat di laptop user)  →  claude -p (login Pro user)
+Jalur online:  Website Vercel  →  /api/generate (serverless, DEEPSEEK_API_KEY)  →  DeepSeek API
+Jalur Claude:  Website Vercel  →  http://localhost:8787 (bat di laptop user)    →  claude -p (login Pro user)
 ```
+
+## A0. Mengaktifkan AI Online (sekali saja)
+
+1. Di dashboard Vercel: **Project → Settings → Environment Variables**
+2. Tambah variabel: Name = `DEEPSEEK_API_KEY`, Value = API key DeepSeek-mu
+   (dapat dari https://platform.deepseek.com → API Keys). Environment: **Production**.
+3. **Redeploy** project (env var baru terpakai setelah deploy ulang).
+4. Buka website → pilih mesin **AI Online (DeepSeek)** → status harus jadi
+   "● AI Online siap ✓".
+
+> ⚠ Endpoint `/api/generate` bisa dipanggil siapa pun yang tahu URL website-mu, dan
+> tiap panggilan memakai saldo DeepSeek-mu. Saldo DeepSeek bersifat prepaid (top-up),
+> jadi kerugian maksimal = sisa saldo. Jangan sebar URL ke publik luas, dan jangan
+> pernah commit API key ke repo (`.env*` sudah di-.gitignore).
+
+## Untuk developer: tes lokal
+
+`vercel dev` membaca `.env.local` (sudah berisi `DEEPSEEK_API_KEY`, di-gitignore)
+sehingga `/api/generate` bisa dites di localhost.
 
 ---
 
@@ -32,7 +56,10 @@ vercel --prod # publish ke URL produksi
 
 ---
 
-## B. Tiap orang yang mau mode AI (sekali setup per komputer)
+## B. Tiap orang yang mau mode AI Claude (sekali setup per komputer)
+
+> Langkah B–C ini **opsional** — hanya untuk yang mau pakai jalur Claude login.
+> Kalau AI Online sudah aktif (bagian A0), user cukup buka website dan langsung generate.
 
 1. Install **Node.js** (https://nodejs.org) dan **Claude Code**, lalu login:
    jalankan `claude` sekali di terminal sampai bisa dipakai.
@@ -61,8 +88,8 @@ selama bat tidak di-restart; kalau restart, kodenya baru — tempel ulang).
 
 - **Browser:** Chrome / Edge / Firefox mengizinkan website https memanggil `http://localhost`.
   **Safari** sering memblokirnya — pakai Chrome/Edge.
-- **Tanpa bridge:** kalau user tidak menyalakan bat, mode **Aturan (template)** tetap jalan
-  di website — hanya mode AI yang butuh bridge lokal.
+- **Tanpa bridge:** kalau user tidak menyalakan bat, mode **Aturan (template)** dan
+  **AI Online (DeepSeek)** tetap jalan di website — hanya mode AI Claude yang butuh bridge lokal.
 - **Knowledge Base:** tiap user mengedit KB di bridge-nya sendiri (`knowledge-base.txt`
   di komputernya). Tidak saling memengaruhi.
 - **Keamanan:** website lain tidak bisa memakai bridge-mu karena tiap permintaan wajib

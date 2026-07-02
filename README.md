@@ -4,15 +4,17 @@ Generator cover letter Upwork untuk **Cintha F.** (Pitch Deck & Presentation Des
 Menulis proposal yang **benar-benar tailored** dengan isi pekerjaan yang kamu tempel —
 meniru gaya, struktur, dan portofolio dari proposal asli.
 
-Ada **2 mesin** dalam satu alat:
+Ada **3 mesin** dalam satu alat:
 
 | Mesin | Butuh apa | Hasil |
 |---|---|---|
 | **Aturan (offline)** | Tidak ada — dobel-klik file HTML | Cepat, berbasis template + deteksi kategori otomatis |
-| **AI Claude** | Claude Code lokal (login Pro/Max) | Membaca isi job & menulis tailored — **tanpa API key** |
+| **AI Online (DeepSeek)** | Website di-deploy ke Vercel + env `DEEPSEEK_API_KEY` | Membaca isi job & menulis tailored — langsung dari website, tanpa install |
+| **AI Claude (login)** | Claude Code lokal (login Pro/Max) | Membaca isi job & menulis tailored — **tanpa API key** |
 
-Mode AI memakai **Claude Code di komputermu sendiri** lewat *local bridge* + *kode pairing*,
-jadi tidak perlu API key berbayar. Tiap orang memakai langganan Claude-nya masing-masing.
+Mode **AI Online** memanggil DeepSeek lewat serverless function `/api/generate` di Vercel;
+API key tersimpan di server, tidak pernah ke browser. Mode **AI Claude** memakai
+**Claude Code di komputermu sendiri** lewat *local bridge* + *kode pairing*.
 
 ---
 
@@ -50,6 +52,8 @@ milik user → diteruskan ke `claude -p` (login mereka).
 | File | Fungsi |
 |---|---|
 | `index.html` | UI generator (mesin Aturan + AI, editor Knowledge Base) |
+| `api/generate.mjs` | Serverless function Vercel: mesin AI Online → DeepSeek API |
+| `vercel.json` | Config Vercel (maxDuration function) |
 | `generator-server.mjs` | Bridge lokal: meneruskan job ke `claude -p`, gerbang kode pairing |
 | `start-generator.bat` | Launcher Windows |
 | `start-generator.command` | Launcher macOS |
